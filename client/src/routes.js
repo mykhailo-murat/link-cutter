@@ -1,12 +1,14 @@
 import React from "react";
-import { useEffect } from "react";
-import {BrowserRouter as Router, Routes, useNavigate , Route} from "react-router-dom";
+import {useEffect} from "react";
+import {BrowserRouter, Routes, useNavigate, Route, Navigate} from "react-router-dom";
 import {LinksPage} from "./pages/LinksPage";
 import {CreatePage} from "./pages/CreatePage";
 import {DetailPage} from "./pages/DetailPage";
 import {AuthPage} from "./pages/AuthPage";
 
-function Redirect({ to }) {
+import { StaticRouter } from "react-router-dom/server";
+
+function Redirect({to}) {
     let navigate = useNavigate();
     useEffect(() => {
         navigate(to);
@@ -18,32 +20,24 @@ export const useRoutes = isAuthenticated => {
     if (isAuthenticated) {
 
         return (
+
             <Routes>
-                <Route path="/links" exact>
-                    <LinksPage/>
-                </Route>
-
-                <Route path="/create" exact>
-                    <CreatePage/>
-                </Route>
-
-                <Route path="/detail/:id">
-                    <DetailPage/>
-                </Route>
-
-                <Route path="/create" render={() => <Redirect to="/create" />} />
+                <Route path="/links" element={<LinksPage/>}/>
+                <Route path="/create" element={<CreatePage/>}/>
+                <Route path="/detail/:id" element={<DetailPage/>}/>
+                <Route path="*" element={<Navigate replace to="/create" />} />
             </Routes>
-    )
+
+        )
     }
     return (
-        <Routes>
-            <Route path="/" exact>
-                <AuthPage/>
-            </Route>
 
-            <Route path="/" render={() => <Redirect to="/" />} />
+        <Routes>
+            <Route path="/" element={<AuthPage/>}/>
+
+            {/*//new ver 6.0 ^*/}
+            <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
 
-
-)
+    )
 }
